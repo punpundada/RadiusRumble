@@ -1,0 +1,26 @@
+[gd_scene load_steps=3 format=3 uid="uid://yc7h6bn7nna3"]
+
+[ext_resource type="Script" path="res://scripts/main.gd" id="1_hk04l"]
+[ext_resource type="Script" path="res://classes/log/log.gd" id="2_ft0v8"]
+
+[node name="Main" type="Node2D"]
+script = ExtResource("1_hk04l")
+
+[node name="Log" type="RichTextLabel" parent="."]
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -1.0
+offset_top = 321.0
+offset_right = 1146.0
+offset_bottom = 644.0
+grow_horizontal = 2
+grow_vertical = 0
+script = ExtResource("2_ft0v8")
+
+[node name="LineEdit" type="LineEdit" parent="."]
+offset_left = 117.0
+offset_top = 49.0
+offset_right = 1019.0
+offset_bottom = 100.0
