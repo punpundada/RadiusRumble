@@ -17,6 +17,7 @@ config/icon="res://icon.svg"
 [autoload]
 
 WS="*res://scripts/globals/websocket_client.gd"
+GameManager="*res://scripts/globals/game_manager.gd"
 
 [editor_plugins]
 

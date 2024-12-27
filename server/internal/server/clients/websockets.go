@@ -1,10 +1,10 @@
 package clients
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"server/internal/server"
+	"server/internal/server/states"
 	"server/pkg/packets"
 
 	"github.com/gorilla/websocket"
@@ -49,10 +49,10 @@ func NewWebSocketClient(
 
 func (c *WebSocketClient) Initialize(id uint64) {
 	c.id = id
-	c.logger.SetPrefix(fmt.Sprintf("Client %d: ", c.id))
-	c.SocketSend(packets.NewId(c.id))
-	c.logger.Printf("Send Id to client")
-	// c.SetState(&states.Connected{})
+	// c.logger.SetPrefix(fmt.Sprintf("Client %d: ", c.id))
+	// c.SocketSend(packets.NewId(c.id))
+	// c.logger.Printf("Send Id to client")
+	c.SetState(&states.Connected{})
 }
 
 func (c *WebSocketClient) Id() uint64 {
@@ -61,15 +61,7 @@ func (c *WebSocketClient) Id() uint64 {
 
 // ProcessMessage implements server.ClientInterfacer.
 func (c *WebSocketClient) ProcessMessage(senderId uint64, message packets.Msg) {
-	// we are setting c.id to client id recived so if in this func if senderId and c.id match we broadcast the message
-	if senderId == c.id {
-		// This message was sent by our own client, so broadcast it to everyone else
-		c.Broadcast(message)
-	} else {
-		// Another client interfacer passed this onto us, or it was broadcast from the hub,
-		// so forward it directly to our own client
-		c.SocketSendAs(message, senderId)
-	}
+	c.state.HandleMessage(senderId, message)
 }
 
 // SocketSend implements server.ClientInterfacer.
@@ -175,6 +167,7 @@ func (c *WebSocketClient) Close(reason string) {
 
 	c.hub.UnregisterChan <- c
 	c.conn.Close()
+	c.SetState(nil)
 	if _, closed := <-c.sendChan; !closed {
 		close(c.sendChan)
 	}
@@ -190,12 +183,13 @@ func (c *WebSocketClient) SetState(newState server.ClientStateHandler) {
 
 	newStateName := "None"
 	if newState != nil {
-		// c.SetState(newState)
 		newStateName = newState.Name()
 	}
 
-	c.logger.Printf("Switching from state %s to state %s ", prevStateName, newStateName)
+	c.logger.Printf("Switching from state %s to %s", prevStateName, newStateName)
+
 	c.state = newState
+
 	if c.state != nil {
 		c.state.SetClient(c)
 		c.state.OnEnter()
