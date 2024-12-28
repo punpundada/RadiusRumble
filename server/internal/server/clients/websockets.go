@@ -11,6 +11,7 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
+// WebSocketClient should implement ClientInterfacer
 type WebSocketClient struct {
 	id       uint64
 	conn     *websocket.Conn
@@ -18,6 +19,7 @@ type WebSocketClient struct {
 	sendChan chan *packets.Packet
 	logger   *log.Logger
 	state    server.ClientStateHandler
+	dbTx     *server.DbTx
 }
 
 func NewWebSocketClient(
@@ -42,6 +44,7 @@ func NewWebSocketClient(
 		conn:     conn,
 		sendChan: make(chan *packets.Packet, 256),
 		logger:   log.New(log.Writer(), "Client unknown: ", log.LstdFlags),
+		dbTx:     hub.NewDbTx(),
 	}
 
 	return client, nil
@@ -49,9 +52,6 @@ func NewWebSocketClient(
 
 func (c *WebSocketClient) Initialize(id uint64) {
 	c.id = id
-	// c.logger.SetPrefix(fmt.Sprintf("Client %d: ", c.id))
-	// c.SocketSend(packets.NewId(c.id))
-	// c.logger.Printf("Send Id to client")
 	c.SetState(&states.Connected{})
 }
 
@@ -194,4 +194,8 @@ func (c *WebSocketClient) SetState(newState server.ClientStateHandler) {
 		c.state.SetClient(c)
 		c.state.OnEnter()
 	}
+}
+
+func (c *WebSocketClient) DbTx() *server.DbTx {
+	return c.dbTx
 }
