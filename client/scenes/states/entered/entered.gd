@@ -1,6 +1,6 @@
 extends Node2D
 
-const packets := preload("res://pacets.gd")
+const packets := preload("res://packets.gd")
 const ws_url:String = "ws://localhost:8080/ws"
 @onready var log: Log = $UI/Log
 
