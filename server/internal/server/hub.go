@@ -1,11 +1,37 @@
 package server
 
 import (
+	"context"
+	"database/sql"
+	_ "embed"
 	"log"
 	"net/http"
+	"server/internal/server/db"
 	"server/internal/server/objects"
 	"server/pkg/packets"
+
+	_ "modernc.org/sqlite"
 )
+
+//when we import package as _ these are blank imports
+// used for only their side effects
+
+// Embed the database schema to be used when creating the database tables
+//
+//go:embed db/config/schema.sql
+var schemaGenSql string
+
+type DbTx struct {
+	Ctx     context.Context
+	Queries *db.Queries
+}
+
+func (h *Hub) NewDbTx() *DbTx {
+	return &DbTx{
+		Ctx:     context.Background(),
+		Queries: db.New(h.dbPool),
+	}
+}
 
 // A structure for the connected client to interface with the hub
 type ClientInterfacer interface {
@@ -37,6 +63,9 @@ type ClientInterfacer interface {
 	Close(reason string)
 
 	SetState(newState ClientStateHandler)
+
+	// A reference to the database transaction context for this client
+	DbTx() *DbTx
 }
 
 // The hub is the central point of communication between all connected clients
@@ -52,25 +81,35 @@ type Hub struct {
 
 	// Clients in this channel will be unregistered with the hub
 	UnregisterChan chan ClientInterfacer
+	//database connection pool
+	dbPool *sql.DB
 }
 
 func NewHub() *Hub {
+	dbPool, err := sql.Open("sqlite", "db.sqlite")
+	if err != nil {
+		log.Fatal(err)
+	}
 	return &Hub{
 		Clients:        objects.NewSharedCollection[ClientInterfacer](10),
 		BroadcastChan:  make(chan *packets.Packet),
 		RegisterChan:   make(chan ClientInterfacer),
 		UnregisterChan: make(chan ClientInterfacer),
+		dbPool:         dbPool,
 	}
 }
 
 func (h *Hub) Run() {
-	log.Println("Awaiting client registrations")
+	log.Println("Initializing database...")
+	_, err := h.dbPool.ExecContext(context.Background(), schemaGenSql)
+	if err != nil {
+		log.Fatal(err)
+	}
 	for {
 		select {
 		case client := <-h.RegisterChan:
 			client.Initialize(h.Clients.Add(client))
 		case client := <-h.UnregisterChan:
-			// h.Clients[client.Id()] = nil
 			h.Clients.Remove(client.Id())
 
 		case packet := <-h.BroadcastChan:
@@ -80,11 +119,6 @@ func (h *Hub) Run() {
 					client.ProcessMessage(packet.SenderId, packet.Msg)
 				}
 			})
-			// for id, client := range h.Clients {
-			// 	if id != packet.SenderId {
-			// 		client.ProcessMessage(packet.SenderId, packet.Msg)
-			// 	}
-			// }
 		}
 	}
 }

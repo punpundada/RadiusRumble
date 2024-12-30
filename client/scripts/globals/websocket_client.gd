@@ -1,6 +1,6 @@
 extends Node
 
-const packets = preload("res://pacets.gd")
+const packets = preload("res://packets.gd")
 
 var socket := WebSocketPeer.new()
 var last_state := WebSocketPeer.STATE_CLOSED
