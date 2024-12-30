@@ -29,4 +29,4 @@ func on_ws_packet_received(packet:packets.Packet)->void:
 func _handle_id_msg(sender_id: int, id_msg: packets.IdMessage) -> void:
 	GameManager.client_id = id_msg.get_id()
 	log.info("Received client ID: %d" % GameManager.client_id)
-	GameManager.set_state(GameManager.State.INGAME)
+	GameManager.set_state(GameManager.State.CONNECTED)

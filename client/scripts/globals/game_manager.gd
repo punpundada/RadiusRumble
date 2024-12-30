@@ -4,11 +4,13 @@ extends Node
 enum State {
 	ENTERED,
 	INGAME,
+	CONNECTED,
 }
 
 var states_scenes: Dictionary = {
 	State.ENTERED : "res://scenes/states/entered/entered.tscn",
-	State.INGAME:"res://scenes/states/ingame/ingame.tscn"
+	State.INGAME:"res://scenes/states/ingame/ingame.tscn",
+	State.CONNECTED:"res://scenes/states/connected/connected.tscn",
 }
 
 var client_id: int
