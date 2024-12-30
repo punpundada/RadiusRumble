@@ -13,6 +13,8 @@ anchors_preset = 10
 anchor_right = 1.0
 offset_bottom = 62.0
 grow_horizontal = 2
+placeholder_text = "Enter Message"
+clear_button_enabled = true
 
 [node name="Log" type="RichTextLabel" parent="UI"]
 anchors_preset = 15

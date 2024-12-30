@@ -1,6 +1,6 @@
 extends Node2D
 
-const packets = preload("res://pacets.gd")
+const packets = preload("res://packets.gd")
 @onready var log: Log = $UI/Log
 @onready var line_edit: LineEdit = $UI/LineEdit
 
