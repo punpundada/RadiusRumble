@@ -66,6 +66,8 @@ type ClientInterfacer interface {
 
 	// A reference to the database transaction context for this client
 	DbTx() *DbTx
+
+	SharedGameObjects() *SharedGameObjects
 }
 
 // The hub is the central point of communication between all connected clients
@@ -83,6 +85,8 @@ type Hub struct {
 	UnregisterChan chan ClientInterfacer
 	//database connection pool
 	dbPool *sql.DB
+
+	SharedGameObjects *SharedGameObjects
 }
 
 func NewHub() *Hub {
@@ -96,6 +100,9 @@ func NewHub() *Hub {
 		RegisterChan:   make(chan ClientInterfacer),
 		UnregisterChan: make(chan ClientInterfacer),
 		dbPool:         dbPool,
+		SharedGameObjects: &SharedGameObjects{
+			Players: objects.NewSharedCollection[*objects.Player](),
+		},
 	}
 }
 
@@ -152,4 +159,9 @@ type ClientStateHandler interface {
 	HandleMessage(senderId uint64, message packets.Msg)
 	// cleanup state handler and perform any last actions
 	OnExit()
+}
+
+type SharedGameObjects struct {
+	// The id of player is id of client
+	Players *objects.SharedCollection[*objects.Player]
 }

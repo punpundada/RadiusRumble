@@ -3,7 +3,8 @@ extends Node2D
 const packets = preload("res://packets.gd")
 @onready var log: Log = $UI/Log
 @onready var line_edit: LineEdit = $UI/LineEdit
-
+@onready var world: Node2D = $World
+const Actor = preload("res://objects/actor/actor.gd")
 
 func _ready() -> void:
 	WS.connection_closed.connect(on_ws_connection_closed)
@@ -20,6 +21,21 @@ func on_ws_packet_received(packet:packets.Packet)->void:
 	var sender_id := packet.get_sender_id()
 	if packet.has_chat():
 		_handle_chat_msg(sender_id, packet.get_chat())
+	elif packet.has_player():
+		_handle_player_msg(packet.get_sender_id(),packet.get_player())
+
+
+func _handle_player_msg(senderId:int,player:packets.PlayerMessage)->void:
+	var actor_id := player.get_id()
+	var actor_name := player.get_name()
+	var x := player.get_x()
+	var y := player.get_y()
+	var radius := player.get_radius()
+	var speed := player.get_speed()
+	
+	var is_player := actor_id == GameManager.client_id
+	var actor := Actor.instantiate(actor_id,actor_name,x,y,radius,speed,is_player)
+	world.add_child(actor)
 
 func _handle_chat_msg(sender_id: int, chat_msg: packets.ChatMessage) -> void:
 	log.chat("Client %d" % sender_id, chat_msg.get_msg())

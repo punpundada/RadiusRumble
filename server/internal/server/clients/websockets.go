@@ -199,3 +199,7 @@ func (c *WebSocketClient) SetState(newState server.ClientStateHandler) {
 func (c *WebSocketClient) DbTx() *server.DbTx {
 	return c.dbTx
 }
+
+func (c *WebSocketClient) SharedGameObjects() *server.SharedGameObjects {
+	return c.hub.SharedGameObjects
+}
