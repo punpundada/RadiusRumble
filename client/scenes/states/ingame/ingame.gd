@@ -9,9 +9,9 @@ const Actor = preload("res://objects/actor/actor.gd")
 func _ready() -> void:
 	WS.connection_closed.connect(on_ws_connection_closed)
 	WS.packet_received.connect(on_ws_packet_received)
-		
+	
 	line_edit.text_submitted.connect(on_line_edit_text_submit)
-	log.info("You are -> %d" % GameManager.client_id)
+	#log.info("You are -> %d" % GameManager.client_id)
 	
 	
 func on_ws_connection_closed():

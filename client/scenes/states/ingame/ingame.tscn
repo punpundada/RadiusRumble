@@ -9,6 +9,12 @@ script = ExtResource("1_58dr8")
 
 [node name="World" type="Node2D" parent="."]
 
+[node name="floor" type="Sprite2D" parent="World"]
+texture_repeat = 2
+texture = ExtResource("3_3qbgt")
+region_enabled = true
+region_rect = Rect2(0, 0, 10000, 10000)
+
 [node name="UI" type="CanvasLayer" parent="."]
 
 [node name="LineEdit" type="LineEdit" parent="UI"]
@@ -27,9 +33,3 @@ offset_top = 63.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_v5ith")
-
-[node name="Sprite2D" type="Sprite2D" parent="."]
-texture_repeat = 2
-texture = ExtResource("3_3qbgt")
-region_enabled = true
-region_rect = Rect2(0, 0, 10000, 10000)

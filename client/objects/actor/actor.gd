@@ -31,12 +31,12 @@ static func instantiate(
 	
 	var actor = Scene.instantiate()
 	actor.actor_id 
-	actor.name=actor_name
+	actor.actor_name=actor_name
 	actor.start_x=x
 	actor.start_y=y
 	actor.start_rad=radius
 	actor.speed=speed
-	actor.is_player=false
+	actor.is_player=is_player
 	
 	return actor
 
