@@ -1,0 +1,28 @@
+[gd_scene load_steps=3 format=3 uid="uid://beruvkl2cb5tq"]
+
+[ext_resource type="Script" path="res://objects/actor/actor.gd" id="1_ofkdm"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_ixihh"]
+resource_local_to_scene = true
+
+[node name="Actor" type="Area2D"]
+script = ExtResource("1_ofkdm")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_ixihh")
+
+[node name="Label" type="Label" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -11.5
+offset_right = 20.0
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "Test"
+
+[node name="Camera2D" type="Camera2D" parent="."]
