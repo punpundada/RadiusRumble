@@ -40,6 +40,14 @@ static func instantiate(
 	
 	return actor
 
+func _input(event: InputEvent) -> void:
+	if is_player and event is InputEventMouseButton and event.is_pressed():
+		match event.button_index:
+			MOUSE_BUTTON_WHEEL_UP:
+				camera.zoom.x = min(4,camera.zoom.x + 0.1)
+			MOUSE_BUTTON_WHEEL_DOWN:
+				camera.zoom.x = min(0.1,camera.zoom.x-0.1)
+
 func _ready() -> void:
 	position.x = start_x
 	position.y=start_y
