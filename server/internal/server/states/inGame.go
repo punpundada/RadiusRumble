@@ -46,6 +46,16 @@ func (i *InGame) HandleMessage(senderId uint64, message packets.Msg) {
 		i.handlePlayer(senderId, message)
 	case *packets.Packet_PlayerDirection:
 		i.handlePlayerDitrection(senderId, message)
+	case *packets.Packet_Chat:
+		i.handleChat(senderId, message)
+	}
+}
+
+func (i *InGame) handleChat(senderId uint64, message *packets.Packet_Chat) {
+	if senderId == i.client.Id() {
+		i.client.Broadcast(message)
+	} else {
+		i.client.SocketSendAs(message, senderId)
 	}
 }
 

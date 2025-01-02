@@ -45,10 +45,15 @@ func _handle_player_msg(senderId:int,player:packets.PlayerMessage)->void:
 		var actor = players[actor_id] as Actor
 		actor.position.x = x
 		actor.position.y = y
+		var direction := player.get_direction()
+		actor.velocity = speed * Vector2.from_angle(direction)
 		
 		
 func _handle_chat_msg(sender_id: int, chat_msg: packets.ChatMessage) -> void:
-	log.chat("Client %d" % sender_id, chat_msg.get_msg())
+	if players.has(sender_id):
+		var actor:Actor = players[sender_id]
+		log.chat(actor.actor_name, chat_msg.get_msg())
+		
 	
 func on_line_edit_text_submit(text:String)->void:
 	var packet := packets.Packet.new()
