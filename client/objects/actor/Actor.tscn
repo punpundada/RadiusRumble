@@ -23,5 +23,6 @@ offset_right = 20.0
 offset_bottom = 11.5
 grow_horizontal = 2
 grow_vertical = 2
+text = "Test"
 
 [node name="Camera2D" type="Camera2D" parent="."]

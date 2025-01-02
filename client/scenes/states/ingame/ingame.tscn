@@ -4,7 +4,7 @@
 [ext_resource type="Script" path="res://classes/log/log.gd" id="1_v5ith"]
 [ext_resource type="Texture2D" uid="uid://c5djvlq7fl3sq" path="res://resources/floor.svg" id="3_3qbgt"]
 
-[node name="InGame" type="Node2D"]
+[node name="InGame" type="Node"]
 script = ExtResource("1_58dr8")
 
 [node name="World" type="Node2D" parent="."]

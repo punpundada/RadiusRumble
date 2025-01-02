@@ -1,4 +1,4 @@
-extends Node2D
+extends Node
 
 @onready var log: Log = $UI/Log
 @onready var line_edit: LineEdit = $UI/LineEdit
