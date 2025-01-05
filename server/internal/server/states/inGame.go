@@ -37,7 +37,15 @@ func (i *InGame) OnEnter() {
 	i.player.Y = rand.Float64() * 1000
 	i.player.Speed = 150.0
 	i.player.Direction = 20.0
+	i.player.Radius = 20.0
 	i.client.SocketSend(packets.NewPlayer(i.client.Id(), i.player))
+	// send the spore info to client
+	go func() {
+		i.client.SharedGameObjects().Spores.ForEach(func(sporeId uint64, spore *objects.Spore) {
+			time.Sleep(5 * time.Millisecond)
+			i.client.SocketSend(packets.NewSpore(sporeId, spore))
+		})
+	}()
 }
 
 func (i *InGame) HandleMessage(senderId uint64, message packets.Msg) {
@@ -46,6 +54,22 @@ func (i *InGame) HandleMessage(senderId uint64, message packets.Msg) {
 		i.handlePlayer(senderId, message)
 	case *packets.Packet_PlayerDirection:
 		i.handlePlayerDitrection(senderId, message)
+	case *packets.Packet_Chat:
+		i.handleChat(senderId, message)
+	case *packets.Packet_SporeConsumed:
+		i.handleSporeConsumed(senderId, message)
+	}
+}
+
+func (i *InGame) handleSporeConsumed(senderId uint64, message *packets.Packet_SporeConsumed) {
+	i.logger.Printf("Spore Consumed %d consumed by client %d", message.SporeConsumed.SporeId, senderId)
+}
+
+func (i *InGame) handleChat(senderId uint64, message *packets.Packet_Chat) {
+	if senderId == i.client.Id() {
+		i.client.Broadcast(message)
+	} else {
+		i.client.SocketSendAs(message, senderId)
 	}
 }
 

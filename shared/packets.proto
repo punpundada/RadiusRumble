@@ -21,6 +21,16 @@ message PlayerMessage {
     double speed = 7; 
 }
 message PlayerDirectionMessage { double direction = 1; }
+message SporeMessage {
+    uint64 id =1;
+    double x=2;
+    double y =3;
+    double radius=4;
+}
+
+message SporeConsumedMessage{
+   uint64 spore_id =1;
+}
 
 // Define the main Packet message
 message Packet {
@@ -34,7 +44,10 @@ message Packet {
         DenyResponseMessage deny_response = 7;
         PlayerMessage player = 8;
         PlayerDirectionMessage player_direction = 9;
+        SporeMessage spore=10;
+        SporeConsumedMessage spore_consumed=11;
     }
 }
+
 
 
