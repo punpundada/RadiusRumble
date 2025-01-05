@@ -34,6 +34,17 @@ Go to the project directory
   cd RadiusRumble
 ```
 ### Install Dependencies
+You must have Protoc installed and added to the PATH environment variable.
+
+Protobuf for golang
+```bash
+go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
+```
+
+SQLC for golang
+```bash
+go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest
+```
 
 Go to the server directory
 ```bash
@@ -72,8 +83,18 @@ Open Godot project
 godot .
 ```
 Run the game from the Godot editor or export it to your desired platform.
+
+## Important commands
+
+To compile SQLC (from root of project)
+```bash
+sqlc generate -f server/internal/server/db/config/sqlc.yml
+```
+
+To compile Protobuf (from root of project)
+```bash
+protoc -I="shared" --go_out="server" "shared/packets.proto"
+```
 ## Contributing
 
 Contributions are always welcome!
-
-
