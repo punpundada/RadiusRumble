@@ -3,10 +3,11 @@ extends Node
 @onready var log: Log = $UI/Log
 @onready var line_edit: LineEdit = $UI/LineEdit
 @onready var world: Node2D = $World
+const Spore = preload("res://objects/spore/spore.gd")
 const packets = preload("res://packets.gd")
 const Actor = preload("res://objects/actor/actor.gd")
 var players := Dictionary()
-
+var spores := Dictionary()
 
 func _ready() -> void:
 	WS.connection_closed.connect(on_ws_connection_closed)
@@ -25,8 +26,20 @@ func on_ws_packet_received(packet:packets.Packet)->void:
 		_handle_chat_msg(sender_id, packet.get_chat())
 	elif packet.has_player():
 		_handle_player_msg(packet.get_sender_id(),packet.get_player())
+	elif packet.has_spore():
+		_handle_spore_msg(sender_id,packet.get_spore())
 
-
+func _handle_spore_msg(sender_id:int,packet:packets.SporeMessage):
+	var spore_id := packet.get_id()
+	var x := packet.get_x()
+	var y := packet.get_y()
+	var rad := packet.get_radius()
+	
+	if not spores.has(sender_id):
+		var spore := Spore.instanciate(spore_id,x,y,rad)
+		world.add_child(spore)
+		spores[spore_id]=spore
+		
 func _handle_player_msg(senderId:int,player:packets.PlayerMessage)->void:
 	var actor_id := player.get_id()
 	var actor_name := player.get_name()

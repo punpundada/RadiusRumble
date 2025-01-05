@@ -37,7 +37,15 @@ func (i *InGame) OnEnter() {
 	i.player.Y = rand.Float64() * 1000
 	i.player.Speed = 150.0
 	i.player.Direction = 20.0
+	i.player.Radius = 20.0
 	i.client.SocketSend(packets.NewPlayer(i.client.Id(), i.player))
+	// send the spore info to client
+	go func() {
+		i.client.SharedGameObjects().Spores.ForEach(func(sporeId uint64, spore *objects.Spore) {
+			time.Sleep(5 * time.Millisecond)
+			i.client.SocketSend(packets.NewSpore(sporeId, spore))
+		})
+	}()
 }
 
 func (i *InGame) HandleMessage(senderId uint64, message packets.Msg) {

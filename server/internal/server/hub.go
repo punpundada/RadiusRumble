@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	_ "embed"
 	"log"
+	"math/rand"
 	"net/http"
 	"server/internal/server/db"
 	"server/internal/server/objects"
@@ -20,6 +21,8 @@ import (
 //
 //go:embed db/config/schema.sql
 var schemaGenSql string
+
+const MaxSpores int = 1000
 
 type DbTx struct {
 	Ctx     context.Context
@@ -102,6 +105,7 @@ func NewHub() *Hub {
 		dbPool:         dbPool,
 		SharedGameObjects: &SharedGameObjects{
 			Players: objects.NewSharedCollection[*objects.Player](),
+			Spores:  objects.NewSharedCollection[*objects.Spore](),
 		},
 	}
 }
@@ -111,6 +115,10 @@ func (h *Hub) Run() {
 	_, err := h.dbPool.ExecContext(context.Background(), schemaGenSql)
 	if err != nil {
 		log.Fatal(err)
+	}
+	log.Println("Placing spores")
+	for range MaxSpores {
+		h.SharedGameObjects.Spores.Add(h.newSpore())
 	}
 	for {
 		select {
@@ -164,4 +172,15 @@ type ClientStateHandler interface {
 type SharedGameObjects struct {
 	// The id of player is id of client
 	Players *objects.SharedCollection[*objects.Player]
+	Spores  *objects.SharedCollection[*objects.Spore]
+}
+
+func (h *Hub) newSpore() *objects.Spore {
+	sporeRadius := max(rand.NormFloat64()*3+10, 5)
+	var x, y = objects.SpawnCords()
+	return &objects.Spore{
+		X:      x,
+		Y:      y,
+		Radius: sporeRadius,
+	}
 }

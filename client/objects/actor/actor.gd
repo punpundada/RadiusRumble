@@ -35,6 +35,7 @@ static func instantiate(
 	actor.start_x=x
 	actor.start_y=y
 	actor.start_rad=radius
+	#actor.radius = radius
 	actor.speed=speed
 	actor.is_player=is_player
 	
@@ -54,7 +55,7 @@ func _ready() -> void:
 	velocity=Vector2.RIGHT*speed
 	radius =start_rad
 	
-	collision_shape.radius=radius
+	collision_shape.radius=start_rad
 	nameplate.text=actor_name
 	
 	
@@ -74,4 +75,5 @@ func _physics_process(delta: float) -> void:
 #draw will be called once after ready is called
 #if we want to call draw again we must call queue_redraw()
 func _draw() -> void:
-	draw_circle(Vector2.ZERO, collision_shape.radius, Color.DARK_ORCHID)
+	draw_circle(Vector2.ZERO, radius, Color.DARK_ORCHID)
+	#draw_circle(Vector2.ZERO, collision_shape.radius, Color.DARK_ORCHID)
