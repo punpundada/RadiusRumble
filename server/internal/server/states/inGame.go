@@ -56,7 +56,13 @@ func (i *InGame) HandleMessage(senderId uint64, message packets.Msg) {
 		i.handlePlayerDitrection(senderId, message)
 	case *packets.Packet_Chat:
 		i.handleChat(senderId, message)
+	case *packets.Packet_SporeConsumed:
+		i.handleSporeConsumed(senderId, message)
 	}
+}
+
+func (i *InGame) handleSporeConsumed(senderId uint64, message *packets.Packet_SporeConsumed) {
+	i.logger.Printf("Spore Consumed %d consumed by client %d", message.SporeConsumed.SporeId, senderId)
 }
 
 func (i *InGame) handleChat(senderId uint64, message *packets.Packet_Chat) {
