@@ -28,6 +28,27 @@ func on_ws_packet_received(packet:packets.Packet)->void:
 		_handle_player_msg(packet.get_sender_id(),packet.get_player())
 	elif packet.has_spore():
 		_handle_spore_msg(sender_id,packet.get_spore())
+	elif packet.has_spore_consumed():
+		_handle_spore_consumed(sender_id,packet.get_spore_consumed())
+
+func _handle_spore_consumed(sender_id:int,consumed_packet:packets.SporeConsumedMessage):
+	var spore_id := consumed_packet.get_spore_id()
+	#if there is no plater or spore we in respective dictonaries we just return
+	if not players.has(sender_id) or not spores.has(spore_id):
+		return
+	var actor = players[sender_id] as Actor
+	var actor_mass := rad_to_mass(actor.radius)
+	
+	var spore = spores[spore_id] as Spore
+	var spore_mass = rad_to_mass(spore.radius)
+	remove_spore(spore)
+	set_actor_mass(actor,spore_mass+actor_mass)
+
+func set_actor_mass(actor:Actor,new_mass:float):
+	actor.radius = sqrt(new_mass/PI)
+
+func rad_to_mass(radius:float)->float:
+	return PI * radius * radius
 
 func _handle_spore_msg(sender_id:int,packet:packets.SporeMessage):
 	var spore_id := packet.get_id()
@@ -74,6 +95,11 @@ func _on_player_area_entered(area:Area2D):
 		consume_spore(area)
 
 func consume_spore(spore:Spore):
+	var player = players[GameManager.client_id] as Actor
+	var player_mass = rad_to_mass(player.radius)
+	var spore_mass = rad_to_mass(spore.radius)
+	set_actor_mass(player,player_mass+spore_mass)
+	
 	var packet := packets.Packet.new()
 	var consume_packet := packet.new_spore_consumed()
 	consume_packet.set_spore_id(spore.spore_id)

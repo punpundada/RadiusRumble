@@ -1,5 +1,9 @@
 extends Area2D
 
+@onready var collision_shape: CircleShape2D = $CollisionShape2D.shape
+@onready var nameplate: Label = $Label
+@onready var camera: Camera2D = $Camera2D
+
 const packets = preload("res://packets.gd")
 const Scene:PackedScene = preload("res://objects/actor/Actor.tscn")
 const Actor = preload("res://objects/actor/actor.gd")
@@ -13,11 +17,13 @@ var speed:float
 var is_player:bool
 
 var velocity:Vector2
-var radius:float
+var radius:float:
+	set(new_radius):
+		radius=new_radius
+		collision_shape.radius=new_radius
+		queue_redraw()
 
-@onready var collision_shape: CircleShape2D = $CollisionShape2D.shape
-@onready var nameplate: Label = $Label
-@onready var camera: Camera2D = $Camera2D
+
 
 static func instantiate(
 	actor_id:int,
